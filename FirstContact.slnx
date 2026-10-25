@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FirstContact.Api/FirstContact.Api.csproj" />
+    <Project Path="src/FirstContact.Application/FirstContact.Application.csproj" />
+    <Project Path="src/FirstContact.Domain/FirstContact.Domain.csproj" />
+    <Project Path="src/FirstContact.Infrastructure/FirstContact.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FirstContact.Api.Tests/FirstContact.Api.Tests.csproj" />
+    <Project Path="tests/FirstContact.Application.Tests/FirstContact.Application.Tests.csproj" />
+    <Project Path="tests/FirstContact.Domain.Tests/FirstContact.Domain.Tests.csproj" />
+    <Project Path="tests/FirstContact.Infrastructure.Tests/FirstContact.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

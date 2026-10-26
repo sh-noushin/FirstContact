@@ -62,7 +62,11 @@
               "buildTarget": "web:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 4300
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test"

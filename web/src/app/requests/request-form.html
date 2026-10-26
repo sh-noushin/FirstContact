@@ -1,0 +1,55 @@
+<section class="panel">
+  <h2>Kundenanfrage</h2>
+  <p class="hint">
+    Die Nachricht wird eingeordnet und weitergeleitet. Ist sich das Modell nicht sicher genug,
+    entscheidet ein Mensch.
+  </p>
+
+  <textarea
+    rows="3"
+    placeholder="Nachricht der Kundin oder des Kunden …"
+    [(ngModel)]="message"
+    (keydown.control.enter)="send()"></textarea>
+
+  <button (click)="send()" [disabled]="loading() || !message().trim()">
+    {{ loading() ? 'Einen Moment …' : 'Einordnen' }}
+  </button>
+
+  <div class="examples">
+    @for (example of examples; track example) {
+      <button class="example" (click)="use(example)" [disabled]="loading()">{{ example }}</button>
+    }
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (result(); as r) {
+    <div class="result" [class.review]="needsHuman()">
+      <h3>Ergebnis</h3>
+
+      <dl>
+        <dt>Typ</dt>
+        <dd>{{ typeLabel(r.type) }}</dd>
+
+        <dt>Sicherheit</dt>
+        <dd>{{ r.confidence.toFixed(2) }}</dd>
+
+        <dt>Dringlichkeit</dt>
+        <dd>{{ r.urgency }}</dd>
+
+        <dt>Weitergeleitet an</dt>
+        <dd>{{ destinationLabel(r.destination) }}</dd>
+      </dl>
+
+      @if (needsHuman()) {
+        <p class="note">
+          Die Sicherheit lag unter der Schwelle, deshalb entscheidet ein Mitarbeiter über die Weiterleitung.
+        </p>
+      }
+
+      <p class="reason">{{ r.reason }}</p>
+    </div>
+  }
+</section>

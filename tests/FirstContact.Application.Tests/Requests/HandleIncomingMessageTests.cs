@@ -1,3 +1,4 @@
+using FirstContact.Application.Features;
 using FirstContact.Application.Knowledge;
 using FirstContact.Application.Requests;
 using FirstContact.Application.Tests.Fakes;
@@ -20,6 +21,8 @@ public class HandleIncomingMessageTests
     private readonly StubKnowledgeSearch _search = new();
     private readonly StubAnswerWriter _writer = new();
     private readonly InMemoryKnowledgeGapRepository _gaps = new();
+    private readonly StubFeatureMatcher _matcher = new();
+    private readonly InMemoryFeatureDemandRepository _demands = new();
 
     [Fact]
     public async Task A_confident_question_goes_straight_to_self_service()
@@ -124,8 +127,10 @@ public class HandleIncomingMessageTests
         var answering = new AnswerFromHandbook(
             _search, _writer, _gaps, new FixedClock(Now), new KnowledgeOptions());
 
+        var grouping = new GroupFeatureWish(_matcher, _demands, new FixedClock(Now));
+
         TriagedRequest triaged = await new HandleIncomingMessage(
-                _classifier, _repository, answering, new FixedClock(Now), _options)
+                _classifier, _repository, answering, grouping, new FixedClock(Now), _options)
             .HandleAsync(message, CancellationToken.None);
 
         return triaged.Request;

@@ -1,3 +1,4 @@
+using FirstContact.Domain.Features;
 using FirstContact.Domain.Knowledge;
 using FirstContact.Domain.Requests;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ public class FirstContactDbContext(DbContextOptions<FirstContactDbContext> optio
     public DbSet<KnowledgeArticle> Articles => Set<KnowledgeArticle>();
 
     public DbSet<KnowledgeGap> KnowledgeGaps => Set<KnowledgeGap>();
+
+    public DbSet<FeatureDemand> FeatureDemands => Set<FeatureDemand>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -3,6 +3,7 @@ using FirstContact.Application.Knowledge;
 using FirstContact.Application.Requests;
 using FirstContact.Infrastructure.Ai;
 using FirstContact.Infrastructure.Dashboard;
+using FirstContact.Infrastructure.Features;
 using FirstContact.Infrastructure.Knowledge;
 using FirstContact.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +22,14 @@ public static class DependencyInjection
         KnowledgeOptions knowledge = Read<KnowledgeOptions>(configuration, KnowledgeOptions.SectionName);
         KnowledgeSearchOptions searching =
             Read<KnowledgeSearchOptions>(configuration, KnowledgeSearchOptions.SectionName);
+        FeatureMatchOptions matching =
+            Read<FeatureMatchOptions>(configuration, FeatureMatchOptions.SectionName);
 
         services.AddSingleton(azure);
         services.AddSingleton(triage);
         services.AddSingleton(knowledge);
         services.AddSingleton(searching);
+        services.AddSingleton(matching);
 
         services.AddDbContext<FirstContactDbContext>(options =>
             options.UseSqlite(configuration.GetConnectionString("Database") ?? "Data Source=firstcontact.db"));
@@ -40,6 +44,8 @@ public static class DependencyInjection
         services.AddScoped<IAnswerWriter, AzureAnswerWriter>();
         services.AddScoped<HandbookSeeder>();
         services.AddScoped<IDashboardQueries, DashboardQueries>();
+        services.AddScoped<IFeatureDemandRepository, FeatureDemandRepository>();
+        services.AddScoped<IFeatureMatcher, EmbeddingFeatureMatcher>();
 
         return services;
     }

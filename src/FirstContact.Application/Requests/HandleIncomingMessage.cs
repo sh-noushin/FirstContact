@@ -1,4 +1,5 @@
 using FirstContact.Application.Abstractions;
+using FirstContact.Application.Features;
 using FirstContact.Application.Knowledge;
 using FirstContact.Domain.Knowledge;
 using FirstContact.Domain.Requests;
@@ -13,6 +14,7 @@ public class HandleIncomingMessage(
     IClassifier classifier,
     IRequestRepository requests,
     AnswerFromHandbook answerFromHandbook,
+    GroupFeatureWish groupFeatureWish,
     IClock clock,
     TriageOptions options)
 {
@@ -29,6 +31,9 @@ public class HandleIncomingMessage(
 
         await requests.AddAsync(request, cancellationToken);
         await requests.SaveAsync(cancellationToken);
+
+        // The wish is grouped after saving, because grouping needs the request's id.
+        await GroupAsync(request, cancellationToken);
 
         return new TriagedRequest(request, answer);
     }
@@ -55,6 +60,15 @@ public class HandleIncomingMessage(
     /// Below the threshold the request waits for a person; otherwise it goes straight
     /// to the team that handles its type.
     /// </summary>
+    /// <summary>A feature wish joins the group of others that mean the same thing.</summary>
+    private async Task GroupAsync(CustomerRequest request, CancellationToken cancellationToken)
+    {
+        if (request.Destination == Destination.ProductTeam)
+        {
+            await groupFeatureWish.HandleAsync(request.Id, request.Message, cancellationToken);
+        }
+    }
+
     private void Route(CustomerRequest request, Classification classification)
     {
         Destination destination = RoutingPolicy.Decide(classification, options.ConfidenceThreshold);

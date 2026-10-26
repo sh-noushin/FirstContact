@@ -1,4 +1,5 @@
 using FirstContact.Application.Dashboard;
+using FirstContact.Application.Features;
 using FirstContact.Application.Knowledge;
 using FirstContact.Application.Requests;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ public static class DependencyInjection
         services.AddScoped<ResolveReview>();
         services.AddScoped<AnswerFromHandbook>();
         services.AddScoped<GetDashboard>();
+        services.AddScoped<GroupFeatureWish>();
 
         return services;
     }

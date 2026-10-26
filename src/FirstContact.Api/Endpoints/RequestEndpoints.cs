@@ -31,5 +31,42 @@ public static class RequestEndpoints
 
             return Results.Ok(RequestView.Of(request));
         });
+
+        app.MapGet("/api/requests/review", async (
+            GetReviewQueue queue,
+            CancellationToken cancellationToken) =>
+        {
+            IReadOnlyList<CustomerRequest> waiting = await queue.HandleAsync(cancellationToken);
+
+            return Results.Ok(waiting.Select(RequestView.Of));
+        });
+
+        app.MapPost("/api/requests/{id:int}/resolve", async (
+            int id,
+            ReviewDecision body,
+            ResolveReview resolve,
+            CancellationToken cancellationToken) =>
+        {
+            if (!Enum.TryParse(body.Type, ignoreCase: true, out RequestType type))
+            {
+                return Results.BadRequest(new { error = $"'{body.Type}' ist kein gueltiger Typ." });
+            }
+
+            try
+            {
+                CustomerRequest request = await resolve.HandleAsync(id, type, cancellationToken);
+
+                return Results.Ok(RequestView.Of(request));
+            }
+            catch (RequestNotFoundException)
+            {
+                return Results.NotFound(new { error = $"Anfrage {id} wurde nicht gefunden." });
+            }
+            catch (InvalidOperationException problem)
+            {
+                // The request was not waiting for review, so the rule in the domain refused.
+                return Results.Conflict(new { error = problem.Message });
+            }
+        });
     }
 }

@@ -16,7 +16,13 @@ public class CustomerRequestConfiguration : IEntityTypeConfiguration<CustomerReq
         builder.HasKey(request => request.Id);
 
         builder.Property(request => request.Message).IsRequired().HasMaxLength(4000);
-        builder.Property(request => request.ReceivedAt).IsRequired();
+        // SQLite cannot sort by DateTimeOffset, so the time is stored as UTC ticks.
+        // Everything is recorded in UTC, so nothing is lost.
+        builder.Property(request => request.ReceivedAt)
+            .HasConversion(
+                moment => moment.UtcTicks,
+                ticks => new DateTimeOffset(ticks, TimeSpan.Zero))
+            .IsRequired();
 
         // Enums are stored as text, so the database stays readable and survives
         // someone reordering the enum members.

@@ -9,5 +9,8 @@ public interface IRequestRepository
 
     Task<CustomerRequest?> FindAsync(int id, CancellationToken cancellationToken);
 
+    /// <summary>The requests waiting for an employee to choose their type, oldest first.</summary>
+    Task<IReadOnlyList<CustomerRequest>> ListAwaitingReviewAsync(CancellationToken cancellationToken);
+
     Task SaveAsync(CancellationToken cancellationToken);
 }

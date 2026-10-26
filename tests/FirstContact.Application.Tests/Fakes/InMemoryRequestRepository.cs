@@ -18,8 +18,15 @@ public class InMemoryRequestRepository : IRequestRepository
         return Task.CompletedTask;
     }
 
+    /// <summary>Ids come from the database in real life, so the position in the list stands in for one.</summary>
     public Task<CustomerRequest?> FindAsync(int id, CancellationToken cancellationToken) =>
         Task.FromResult(_requests.ElementAtOrDefault(id - 1));
+
+    public Task<IReadOnlyList<CustomerRequest>> ListAwaitingReviewAsync(CancellationToken cancellationToken) =>
+        Task.FromResult<IReadOnlyList<CustomerRequest>>(
+            _requests.Where(request => request.Status == RequestStatus.AwaitingReview)
+                .OrderBy(request => request.ReceivedAt)
+                .ToList());
 
     public Task SaveAsync(CancellationToken cancellationToken)
     {

@@ -13,6 +13,12 @@ public class RequestRepository(FirstContactDbContext database) : IRequestReposit
     public Task<CustomerRequest?> FindAsync(int id, CancellationToken cancellationToken) =>
         database.Requests.FirstOrDefaultAsync(request => request.Id == id, cancellationToken);
 
+    public async Task<IReadOnlyList<CustomerRequest>> ListAwaitingReviewAsync(CancellationToken cancellationToken) =>
+        await database.Requests
+            .Where(request => request.Status == RequestStatus.AwaitingReview)
+            .OrderBy(request => request.ReceivedAt)
+            .ToListAsync(cancellationToken);
+
     public Task SaveAsync(CancellationToken cancellationToken) =>
         database.SaveChangesAsync(cancellationToken);
 }

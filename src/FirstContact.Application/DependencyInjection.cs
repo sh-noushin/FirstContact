@@ -9,6 +9,8 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<HandleIncomingMessage>();
+        services.AddScoped<GetReviewQueue>();
+        services.AddScoped<ResolveReview>();
 
         return services;
     }

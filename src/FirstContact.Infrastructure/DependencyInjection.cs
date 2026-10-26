@@ -6,6 +6,7 @@ using FirstContact.Infrastructure.Dashboard;
 using FirstContact.Infrastructure.Features;
 using FirstContact.Infrastructure.Knowledge;
 using FirstContact.Infrastructure.Persistence;
+using FirstContact.Infrastructure.Privacy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<IRequestRepository, RequestRepository>();
         services.AddSingleton<IClock, SystemClock>();
         services.AddScoped<IClassifier, AzureClassifier>();
+        services.AddScoped<IPersonalDataRedactor, AzureLanguageRedactor>();
 
         services.AddScoped<IKnowledgeGapRepository, KnowledgeGapRepository>();
         services.AddSingleton<IEmbedder, AzureEmbedder>();

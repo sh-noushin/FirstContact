@@ -27,6 +27,7 @@ public class TestApi : WebApplicationFactory<Program>
         _connection.Open();
 
         builder.UseSetting("AzureAi:Endpoint", "https://example.invalid");
+        builder.UseSetting("AzureAi:ServicesEndpoint", "https://example.invalid");
 
         builder.ConfigureServices(services =>
         {
@@ -39,6 +40,9 @@ public class TestApi : WebApplicationFactory<Program>
 
             services.RemoveAll<IAnswerWriter>();
             services.AddScoped<IAnswerWriter>(_ => AnswerWriter);
+
+            services.RemoveAll<IPersonalDataRedactor>();
+            services.AddScoped<IPersonalDataRedactor, PassThroughRedactor>();
 
             services.RemoveAll<DbContextOptions<FirstContactDbContext>>();
             services.AddDbContext<FirstContactDbContext>(options => options.UseSqlite(_connection));

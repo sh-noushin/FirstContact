@@ -21,6 +21,7 @@ public class HandleIncomingMessageTests
     private readonly StubKnowledgeSearch _search = new();
     private readonly StubAnswerWriter _writer = new();
     private readonly InMemoryKnowledgeGapRepository _gaps = new();
+    private readonly StubRedactor _redactor = new();
     private readonly StubFeatureMatcher _matcher = new();
     private readonly InMemoryFeatureDemandRepository _demands = new();
 
@@ -130,10 +131,42 @@ public class HandleIncomingMessageTests
         var grouping = new GroupFeatureWish(_matcher, _demands, new FixedClock(Now));
 
         TriagedRequest triaged = await new HandleIncomingMessage(
-                _classifier, _repository, answering, grouping, new FixedClock(Now), _options)
+                _redactor, _classifier, _repository, answering, grouping, new FixedClock(Now), _options)
             .HandleAsync(message, CancellationToken.None);
 
         return triaged.Request;
+    }
+
+    [Fact]
+    public async Task The_model_only_ever_sees_the_redacted_text()
+    {
+        _redactor.Replacement = "Mein Name ist [PERSON], meine Adresse [EMAIL]";
+
+        await Handle("Mein Name ist Anna Schmidt, meine Adresse anna@firma.de");
+
+        Assert.Equal("Mein Name ist [PERSON], meine Adresse [EMAIL]", _classifier.SeenMessage);
+    }
+
+    [Fact]
+    public async Task The_original_wording_is_still_stored_for_the_support_team()
+    {
+        _redactor.Replacement = "Mein Name ist [PERSON]";
+
+        CustomerRequest request = await Handle("Mein Name ist Anna Schmidt");
+
+        Assert.Equal("Mein Name ist Anna Schmidt", request.Message);
+    }
+
+    [Fact]
+    public async Task A_message_that_could_not_be_cleaned_goes_to_a_person_untouched_by_the_model()
+    {
+        // Failing closed: no answer is better than sending personal data on.
+        _redactor.Fails = true;
+
+        CustomerRequest request = await Handle("Mein Name ist Anna Schmidt");
+
+        Assert.Equal(Destination.HumanReview, request.Destination);
+        Assert.Equal(0, _classifier.Calls);
     }
 
     private static Classification Of(RequestType type, double confidence) =>

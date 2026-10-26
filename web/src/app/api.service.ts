@@ -17,6 +17,15 @@ export interface GapView {
   lastAskedAt: string;
 }
 
+/** A grouped feature wish, with the customers' own words as evidence. */
+export interface DemandView {
+  id: number;
+  title: string;
+  customerCount: number;
+  quotes: string[];
+  lastSeen: string;
+}
+
 /** The numbers behind the automation. */
 export interface DashboardView {
   totalRequests: number;
@@ -54,6 +63,11 @@ export class ApiService {
   /** Sends a customer message and returns how it was classified and routed. */
   send(message: string): Promise<RequestView> {
     return firstValueFrom(this.http.post<RequestView>('/api/requests', { message }));
+  }
+
+  /** What customers are asking for, grouped by idea. */
+  features(): Promise<DemandView[]> {
+    return firstValueFrom(this.http.get<DemandView[]>('/api/features'));
   }
 
   /** The numbers for the dashboard. */

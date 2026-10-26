@@ -1,0 +1,47 @@
+<section class="panel">
+  <div class="head">
+    <div>
+      <h2>Funktionswünsche</h2>
+      <p class="hint">
+        Ähnliche Wünsche werden zusammengefasst, damit sichtbar wird, wie viele Kundinnen und
+        Kunden dasselbe möchten &mdash; auch wenn sie es ganz unterschiedlich formulieren.
+      </p>
+    </div>
+
+    <button class="refresh" (click)="refresh()" [disabled]="loading()">Aktualisieren</button>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (demands().length) {
+    <p class="total">
+      {{ demands().length }} Themen &middot; {{ totalWishes() }} Kundenwünsche
+    </p>
+  } @else if (!loading()) {
+    <p class="empty">Noch keine Funktionswünsche eingegangen.</p>
+  }
+
+  @for (demand of demands(); track demand.id) {
+    <article class="item">
+      <div class="row">
+        <span class="count" [class.hot]="demand.customerCount > 1">{{ demand.customerCount }}</span>
+        <span class="title">{{ demand.title }}</span>
+        <span class="bar"><span [style.width.%]="share(demand.customerCount)"></span></span>
+      </div>
+
+      <button class="toggle" (click)="toggle(demand.id)">
+        {{ isOpen(demand.id) ? 'Zitate ausblenden' : 'Zitate anzeigen' }}
+      </button>
+
+      @if (isOpen(demand.id)) {
+        <ul class="quotes">
+          @for (quote of demand.quotes; track $index) {
+            <li>{{ quote }}</li>
+          }
+        </ul>
+      }
+    </article>
+  }
+</section>

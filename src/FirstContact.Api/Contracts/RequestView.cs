@@ -16,6 +16,7 @@ public record RequestView(
     string Destination,
     string Status,
     bool DecidedByHuman,
+    bool AnsweredByBot,
     DateTimeOffset ReceivedAt,
     AnswerView? Answer = null)
 {
@@ -29,6 +30,7 @@ public record RequestView(
         request.Destination?.ToString() ?? "",
         request.Status.ToString(),
         request.DecidedByHuman,
+        request.AnsweredByBot,
         request.ReceivedAt,
         answer);
 }

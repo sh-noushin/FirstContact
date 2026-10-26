@@ -37,6 +37,12 @@ public class CustomerRequest
     /// <summary>True when an employee chose the type instead of the classifier.</summary>
     public bool DecidedByHuman { get; private set; }
 
+    /// <summary>
+    /// True when the bot answered from the handbook, so nobody had to. This is what the
+    /// self-service rate counts, which is why it is recorded rather than guessed at.
+    /// </summary>
+    public bool AnsweredByBot { get; private set; }
+
     public static CustomerRequest Receive(string message, DateTimeOffset receivedAt)
     {
         string trimmed = message?.Trim() ?? string.Empty;
@@ -90,6 +96,18 @@ public class CustomerRequest
 
         Destination = destination;
         Status = RequestStatus.Routed;
+    }
+
+    /// <summary>Records whether the handbook could answer, once the request reached self-service.</summary>
+    public void RecordSelfServiceAnswer(bool answered)
+    {
+        if (Destination != Requests.Destination.SelfService)
+        {
+            throw new InvalidOperationException(
+                "Only a request that reached self-service can record a handbook answer.");
+        }
+
+        AnsweredByBot = answered;
     }
 
     private Classification EnsureClassified(string action) =>

@@ -16,7 +16,6 @@ public static class RequestEndpoints
         app.MapPost("/api/requests", async (
             NewRequest body,
             HandleIncomingMessage handle,
-            AnswerFromHandbook answerFromHandbook,
             CancellationToken cancellationToken) =>
         {
             if (string.IsNullOrWhiteSpace(body.Message))
@@ -29,14 +28,13 @@ public static class RequestEndpoints
                 return Results.BadRequest(new { error = $"Die Nachricht ist zu lang (max. {MaxMessageLength} Zeichen)." });
             }
 
-            CustomerRequest request = await handle.HandleAsync(body.Message, cancellationToken);
+            TriagedRequest triaged = await handle.HandleAsync(body.Message, cancellationToken);
 
-            // A question that went to self-service gets answered from the handbook.
-            AnswerView? answer = request.Destination == Destination.SelfService
-                ? AnswerView.Of(await answerFromHandbook.HandleAsync(request.Message, cancellationToken))
+            AnswerView? answer = triaged.Request.Destination == Destination.SelfService
+                ? AnswerView.Of(triaged.Answer)
                 : null;
 
-            return Results.Ok(RequestView.Of(request, answer));
+            return Results.Ok(RequestView.Of(triaged.Request, answer));
         });
 
         app.MapGet("/api/requests/review", async (

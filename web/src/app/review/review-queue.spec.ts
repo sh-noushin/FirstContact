@@ -123,6 +123,7 @@ function waiting(id: number, confidence: number): RequestView {
     destination: 'HumanReview',
     status: 'AwaitingReview',
     decidedByHuman: false,
+    answeredByBot: false,
     receivedAt: '2026-10-26T08:00:00+00:00',
     answer: null,
   };

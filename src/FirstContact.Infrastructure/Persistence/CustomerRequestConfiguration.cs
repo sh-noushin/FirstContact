@@ -29,6 +29,7 @@ public class CustomerRequestConfiguration : IEntityTypeConfiguration<CustomerReq
         builder.Property(request => request.Status).HasConversion<string>().HasMaxLength(30);
         builder.Property(request => request.Destination).HasConversion<string>().HasMaxLength(30);
         builder.Property(request => request.DecidedByHuman);
+        builder.Property(request => request.AnsweredByBot);
 
         // The classification has no identity of its own: it is part of the request.
         builder.OwnsOne(request => request.Classification, classification =>

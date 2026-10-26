@@ -1,5 +1,7 @@
+using FirstContact.Application.Knowledge;
 using FirstContact.Application.Requests;
 using FirstContact.Application.Tests.Fakes;
+using FirstContact.Domain.Knowledge;
 using FirstContact.Domain.Requests;
 
 namespace FirstContact.Application.Tests.Requests;
@@ -15,6 +17,9 @@ public class HandleIncomingMessageTests
     private readonly FakeClassifier _classifier = new();
     private readonly InMemoryRequestRepository _repository = new();
     private readonly TriageOptions _options = new();
+    private readonly StubKnowledgeSearch _search = new();
+    private readonly StubAnswerWriter _writer = new();
+    private readonly InMemoryKnowledgeGapRepository _gaps = new();
 
     [Fact]
     public async Task A_confident_question_goes_straight_to_self_service()
@@ -114,9 +119,17 @@ public class HandleIncomingMessageTests
         Assert.Empty(_repository.All);
     }
 
-    private Task<CustomerRequest> Handle(string message) =>
-        new HandleIncomingMessage(_classifier, _repository, new FixedClock(Now), _options)
+    private async Task<CustomerRequest> Handle(string message)
+    {
+        var answering = new AnswerFromHandbook(
+            _search, _writer, _gaps, new FixedClock(Now), new KnowledgeOptions());
+
+        TriagedRequest triaged = await new HandleIncomingMessage(
+                _classifier, _repository, answering, new FixedClock(Now), _options)
             .HandleAsync(message, CancellationToken.None);
+
+        return triaged.Request;
+    }
 
     private static Classification Of(RequestType type, double confidence) =>
         Classification.Create(type, Confidence.Create(confidence), Urgency.Medium, "Testfall");

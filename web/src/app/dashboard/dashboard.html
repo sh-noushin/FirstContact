@@ -1,0 +1,68 @@
+<section class="panel">
+  <div class="head">
+    <div>
+      <h2>Kennzahlen</h2>
+      <p class="hint">Wie viel der Automatisierung tatsächlich ankommt.</p>
+    </div>
+
+    <button class="refresh" (click)="refresh()" [disabled]="loading()">Aktualisieren</button>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (view(); as v) {
+    <div class="tiles">
+      <div class="tile wide">
+        <span class="label">Self-Service-Quote</span>
+        <span class="value">{{ selfServicePercent() }}%</span>
+        <span class="note">{{ v.answeredByBot }} von {{ v.totalRequests }} ohne Mitarbeiter gelöst</span>
+      </div>
+
+      <div class="tile">
+        <span class="label">Anfragen</span>
+        <span class="value">{{ v.totalRequests }}</span>
+      </div>
+
+      <div class="tile">
+        <span class="label">An Support</span>
+        <span class="value">{{ v.toSupport }}</span>
+      </div>
+
+      <div class="tile">
+        <span class="label">An Produkt</span>
+        <span class="value">{{ v.toProduct }}</span>
+      </div>
+
+      <div class="tile">
+        <span class="label">Manuelle Prüfung</span>
+        <span class="value">{{ v.awaitingReview }}</span>
+      </div>
+
+      <div class="tile">
+        <span class="label">Ø Sicherheit</span>
+        <span class="value">{{ v.averageConfidence.toFixed(2) }}</span>
+      </div>
+
+      <div class="tile">
+        <span class="label">Wissenslücken</span>
+        <span class="value">{{ v.openKnowledgeGaps }}</span>
+      </div>
+    </div>
+
+    @if (types().length) {
+      <h3>Nach Typ</h3>
+
+      @for (type of types(); track type.name) {
+        <div class="row">
+          <span class="name">{{ type.name }}</span>
+          <span class="bar"><span [style.width.%]="share(type.count)"></span></span>
+          <span class="count">{{ type.count }}</span>
+        </div>
+      }
+    } @else if (!loading()) {
+      <p class="empty">Noch keine Anfragen. Senden Sie eine Nachricht, dann füllt sich diese Seite.</p>
+    }
+  }
+</section>

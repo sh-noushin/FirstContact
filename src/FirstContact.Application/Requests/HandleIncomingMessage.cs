@@ -1,4 +1,6 @@
 using FirstContact.Application.Abstractions;
+using FirstContact.Application.Knowledge;
+using FirstContact.Domain.Knowledge;
 using FirstContact.Domain.Requests;
 
 namespace FirstContact.Application.Requests;
@@ -10,10 +12,11 @@ namespace FirstContact.Application.Requests;
 public class HandleIncomingMessage(
     IClassifier classifier,
     IRequestRepository requests,
+    AnswerFromHandbook answerFromHandbook,
     IClock clock,
     TriageOptions options)
 {
-    public async Task<CustomerRequest> HandleAsync(string message, CancellationToken cancellationToken)
+    public async Task<TriagedRequest> HandleAsync(string message, CancellationToken cancellationToken)
     {
         CustomerRequest request = CustomerRequest.Receive(message, clock.UtcNow);
 
@@ -22,10 +25,30 @@ public class HandleIncomingMessage(
 
         Route(request, classification);
 
+        GroundedAnswer answer = await AnswerAsync(request, cancellationToken);
+
         await requests.AddAsync(request, cancellationToken);
         await requests.SaveAsync(cancellationToken);
 
-        return request;
+        return new TriagedRequest(request, answer);
+    }
+
+    /// <summary>
+    /// A question that reached self-service is answered from the handbook straight away.
+    /// Whether that worked is recorded on the request, so the self-service rate is measured
+    /// rather than estimated.
+    /// </summary>
+    private async Task<GroundedAnswer> AnswerAsync(CustomerRequest request, CancellationToken cancellationToken)
+    {
+        if (request.Destination != Destination.SelfService)
+        {
+            return GroundedAnswer.NotFound;
+        }
+
+        GroundedAnswer answer = await answerFromHandbook.HandleAsync(request.Message, cancellationToken);
+        request.RecordSelfServiceAnswer(answer.Answered);
+
+        return answer;
     }
 
     /// <summary>

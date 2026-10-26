@@ -71,6 +71,7 @@ function view(overrides: Partial<RequestView> = {}): RequestView {
     destination: 'SelfService',
     status: 'Routed',
     decidedByHuman: false,
+    answeredByBot: false,
     receivedAt: '2026-10-26T08:00:00+00:00',
     answer: null,
     ...overrides,

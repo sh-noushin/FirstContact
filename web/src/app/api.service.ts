@@ -17,6 +17,19 @@ export interface GapView {
   lastAskedAt: string;
 }
 
+/** The numbers behind the automation. */
+export interface DashboardView {
+  totalRequests: number;
+  answeredByBot: number;
+  selfServiceRate: number;
+  toSupport: number;
+  toProduct: number;
+  awaitingReview: number;
+  averageConfidence: number;
+  openKnowledgeGaps: number;
+  byType: Record<string, number>;
+}
+
 /** What the API sends back after a message was classified and routed. */
 export interface RequestView {
   id: number;
@@ -28,6 +41,7 @@ export interface RequestView {
   destination: string;
   status: string;
   decidedByHuman: boolean;
+  answeredByBot: boolean;
   receivedAt: string;
   answer: AnswerView | null;
 }
@@ -40,6 +54,11 @@ export class ApiService {
   /** Sends a customer message and returns how it was classified and routed. */
   send(message: string): Promise<RequestView> {
     return firstValueFrom(this.http.post<RequestView>('/api/requests', { message }));
+  }
+
+  /** The numbers for the dashboard. */
+  dashboard(): Promise<DashboardView> {
+    return firstValueFrom(this.http.get<DashboardView>('/api/dashboard'));
   }
 
   /** The questions the handbook could not answer, most asked first. */

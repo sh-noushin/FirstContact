@@ -2,6 +2,7 @@ using FirstContact.Application.Abstractions;
 using FirstContact.Application.Knowledge;
 using FirstContact.Application.Requests;
 using FirstContact.Infrastructure.Ai;
+using FirstContact.Infrastructure.Dashboard;
 using FirstContact.Infrastructure.Knowledge;
 using FirstContact.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IKnowledgeSearch, VectorSearch>();
         services.AddScoped<IAnswerWriter, AzureAnswerWriter>();
         services.AddScoped<HandbookSeeder>();
+        services.AddScoped<IDashboardQueries, DashboardQueries>();
 
         return services;
     }

@@ -1,3 +1,4 @@
+using FirstContact.Application.Dashboard;
 using FirstContact.Application.Knowledge;
 using FirstContact.Application.Requests;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<GetReviewQueue>();
         services.AddScoped<ResolveReview>();
         services.AddScoped<AnswerFromHandbook>();
+        services.AddScoped<GetDashboard>();
 
         return services;
     }

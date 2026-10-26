@@ -33,6 +33,7 @@ app.UseCors();
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapRequests();
 app.MapKnowledge();
+app.MapDashboard();
 
 app.Run();
 

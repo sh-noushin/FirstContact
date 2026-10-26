@@ -19,3 +19,23 @@ h1 {
   color: #646b7a;
   font-size: 0.9rem;
 }
+
+nav {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+nav a {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.88rem;
+  color: #646b7a;
+  text-decoration: none;
+  background: #eef1f6;
+  border-radius: 8px;
+}
+
+nav a.active {
+  color: #fff;
+  background: #2563eb;
+}

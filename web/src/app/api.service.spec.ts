@@ -37,6 +37,27 @@ describe('ApiService', () => {
     expect(answer.destination).toBe('HumanReview');
     expect(answer.confidence).toBe(0.4);
   });
+
+  it('asks for the review queue', async () => {
+    const pending = api.reviewQueue();
+
+    const call = http.expectOne('/api/requests/review');
+    expect(call.request.method).toBe('GET');
+
+    call.flush([view({ destination: 'HumanReview' })]);
+    await expect(pending).resolves.toHaveLength(1);
+  });
+
+  it('sends the chosen type when resolving', async () => {
+    const pending = api.resolve(7, 'Problem');
+
+    const call = http.expectOne('/api/requests/7/resolve');
+    expect(call.request.method).toBe('POST');
+    expect(call.request.body).toEqual({ type: 'Problem' });
+
+    call.flush(view({ id: 7, type: 'Problem', destination: 'SupportTeam' }));
+    await expect(pending).resolves.toMatchObject({ destination: 'SupportTeam' });
+  });
 });
 
 function view(overrides: Partial<RequestView> = {}): RequestView {

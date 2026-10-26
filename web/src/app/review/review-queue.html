@@ -1,0 +1,46 @@
+<section class="panel">
+  <div class="head">
+    <div>
+      <h2>Manuelle Prüfung</h2>
+      <p class="hint">
+        Diese Nachrichten lagen unter der Sicherheitsschwelle. Wählen Sie den passenden Typ,
+        danach wird die Anfrage ganz normal weitergeleitet.
+      </p>
+    </div>
+
+    <button class="refresh" (click)="refresh()" [disabled]="loading()">Aktualisieren</button>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (loading() && !waiting().length) {
+    <p class="hint">Einen Moment …</p>
+  } @else if (!waiting().length) {
+    <p class="empty">Nichts zu prüfen. Alle Anfragen wurden automatisch weitergeleitet.</p>
+  }
+
+  @for (request of waiting(); track request.id) {
+    <article class="item">
+      <p class="message">{{ request.message }}</p>
+
+      <p class="meta">
+        Vermutet: <strong>{{ request.type }}</strong>
+        &middot; Sicherheit <strong>{{ request.confidence.toFixed(2) }}</strong>
+      </p>
+
+      @if (request.reason) {
+        <p class="reason">{{ request.reason }}</p>
+      }
+
+      <div class="choices">
+        @for (choice of choices; track choice.value) {
+          <button
+            (click)="decide(request, choice.value)"
+            [disabled]="busyId() === request.id">{{ choice.label }}</button>
+        }
+      </div>
+    </article>
+  }
+</section>

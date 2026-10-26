@@ -25,4 +25,14 @@ export class ApiService {
   send(message: string): Promise<RequestView> {
     return firstValueFrom(this.http.post<RequestView>('/api/requests', { message }));
   }
+
+  /** The requests the classifier was not sure enough about. */
+  reviewQueue(): Promise<RequestView[]> {
+    return firstValueFrom(this.http.get<RequestView[]>('/api/requests/review'));
+  }
+
+  /** An employee picks the type for a request in the queue. */
+  resolve(id: number, type: string): Promise<RequestView> {
+    return firstValueFrom(this.http.post<RequestView>(`/api/requests/${id}/resolve`, { type }));
+  }
 }

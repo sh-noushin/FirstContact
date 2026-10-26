@@ -1,3 +1,4 @@
+using FirstContact.Domain.Knowledge;
 using FirstContact.Domain.Requests;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,10 @@ namespace FirstContact.Infrastructure.Persistence;
 public class FirstContactDbContext(DbContextOptions<FirstContactDbContext> options) : DbContext(options)
 {
     public DbSet<CustomerRequest> Requests => Set<CustomerRequest>();
+
+    public DbSet<KnowledgeArticle> Articles => Set<KnowledgeArticle>();
+
+    public DbSet<KnowledgeGap> KnowledgeGaps => Set<KnowledgeGap>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

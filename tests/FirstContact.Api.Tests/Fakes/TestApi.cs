@@ -1,4 +1,5 @@
 using FirstContact.Application.Abstractions;
+using FirstContact.Infrastructure.Ai;
 using FirstContact.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -19,6 +20,8 @@ public class TestApi : WebApplicationFactory<Program>
 
     public StubClassifier Classifier { get; } = new();
 
+    public StubAnswerWriter AnswerWriter { get; } = new();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         _connection.Open();
@@ -29,6 +32,13 @@ public class TestApi : WebApplicationFactory<Program>
         {
             services.RemoveAll<IClassifier>();
             services.AddScoped<IClassifier>(_ => Classifier);
+
+            // Nothing in the tests may reach Azure.
+            services.RemoveAll<IEmbedder>();
+            services.AddSingleton<IEmbedder, StubEmbedder>();
+
+            services.RemoveAll<IAnswerWriter>();
+            services.AddScoped<IAnswerWriter>(_ => AnswerWriter);
 
             services.RemoveAll<DbContextOptions<FirstContactDbContext>>();
             services.AddDbContext<FirstContactDbContext>(options => options.UseSqlite(_connection));

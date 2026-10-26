@@ -12,6 +12,8 @@ public class AzureAiOptions
 
     public string ChatDeployment { get; set; } = "gpt-5-mini";
 
+    public string EmbeddingDeployment { get; set; } = "text-embedding-3-small";
+
     /// <summary>Only needed where there is no az login session, for example in a container.</summary>
     public string ApiKey { get; set; } = "";
 

@@ -1,6 +1,8 @@
 using FirstContact.Application.Abstractions;
+using FirstContact.Application.Knowledge;
 using FirstContact.Application.Requests;
 using FirstContact.Infrastructure.Ai;
+using FirstContact.Infrastructure.Knowledge;
 using FirstContact.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +17,14 @@ public static class DependencyInjection
     {
         AzureAiOptions azure = Read<AzureAiOptions>(configuration, AzureAiOptions.SectionName);
         TriageOptions triage = Read<TriageOptions>(configuration, TriageOptions.SectionName);
+        KnowledgeOptions knowledge = Read<KnowledgeOptions>(configuration, KnowledgeOptions.SectionName);
+        KnowledgeSearchOptions searching =
+            Read<KnowledgeSearchOptions>(configuration, KnowledgeSearchOptions.SectionName);
 
         services.AddSingleton(azure);
         services.AddSingleton(triage);
+        services.AddSingleton(knowledge);
+        services.AddSingleton(searching);
 
         services.AddDbContext<FirstContactDbContext>(options =>
             options.UseSqlite(configuration.GetConnectionString("Database") ?? "Data Source=firstcontact.db"));
@@ -25,6 +32,12 @@ public static class DependencyInjection
         services.AddScoped<IRequestRepository, RequestRepository>();
         services.AddSingleton<IClock, SystemClock>();
         services.AddScoped<IClassifier, AzureClassifier>();
+
+        services.AddScoped<IKnowledgeGapRepository, KnowledgeGapRepository>();
+        services.AddSingleton<IEmbedder, AzureEmbedder>();
+        services.AddScoped<IKnowledgeSearch, VectorSearch>();
+        services.AddScoped<IAnswerWriter, AzureAnswerWriter>();
+        services.AddScoped<HandbookSeeder>();
 
         return services;
     }

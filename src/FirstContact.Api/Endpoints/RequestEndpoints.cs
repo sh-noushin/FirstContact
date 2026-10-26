@@ -1,4 +1,5 @@
 using FirstContact.Api.Contracts;
+using FirstContact.Application.Knowledge;
 using FirstContact.Application.Requests;
 using FirstContact.Domain.Requests;
 
@@ -15,6 +16,7 @@ public static class RequestEndpoints
         app.MapPost("/api/requests", async (
             NewRequest body,
             HandleIncomingMessage handle,
+            AnswerFromHandbook answerFromHandbook,
             CancellationToken cancellationToken) =>
         {
             if (string.IsNullOrWhiteSpace(body.Message))
@@ -29,7 +31,12 @@ public static class RequestEndpoints
 
             CustomerRequest request = await handle.HandleAsync(body.Message, cancellationToken);
 
-            return Results.Ok(RequestView.Of(request));
+            // A question that went to self-service gets answered from the handbook.
+            AnswerView? answer = request.Destination == Destination.SelfService
+                ? AnswerView.Of(await answerFromHandbook.HandleAsync(request.Message, cancellationToken))
+                : null;
+
+            return Results.Ok(RequestView.Of(request, answer));
         });
 
         app.MapGet("/api/requests/review", async (
@@ -38,7 +45,7 @@ public static class RequestEndpoints
         {
             IReadOnlyList<CustomerRequest> waiting = await queue.HandleAsync(cancellationToken);
 
-            return Results.Ok(waiting.Select(RequestView.Of));
+            return Results.Ok(waiting.Select(request => RequestView.Of(request)));
         });
 
         app.MapPost("/api/requests/{id:int}/resolve", async (

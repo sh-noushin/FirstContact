@@ -16,9 +16,10 @@ public record RequestView(
     string Destination,
     string Status,
     bool DecidedByHuman,
-    DateTimeOffset ReceivedAt)
+    DateTimeOffset ReceivedAt,
+    AnswerView? Answer = null)
 {
-    public static RequestView Of(CustomerRequest request) => new(
+    public static RequestView Of(CustomerRequest request, AnswerView? answer = null) => new(
         request.Id,
         request.Message,
         request.Classification?.Type.ToString() ?? "",
@@ -28,5 +29,6 @@ public record RequestView(
         request.Destination?.ToString() ?? "",
         request.Status.ToString(),
         request.DecidedByHuman,
-        request.ReceivedAt);
+        request.ReceivedAt,
+        answer);
 }

@@ -1,6 +1,7 @@
 using FirstContact.Api.Endpoints;
 using FirstContact.Application;
 using FirstContact.Infrastructure;
+using FirstContact.Infrastructure.Knowledge;
 using FirstContact.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,16 +18,21 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
 
 var app = builder.Build();
 
-// Create the SQLite file on first start, so there is nothing to set up by hand.
+// Create the SQLite file and load the handbook on first start, so there is
+// nothing to set up by hand after cloning.
 using (IServiceScope scope = app.Services.CreateScope())
 {
     scope.ServiceProvider.GetRequiredService<FirstContactDbContext>().Database.EnsureCreated();
+
+    await scope.ServiceProvider.GetRequiredService<HandbookSeeder>()
+        .SeedAsync(Path.Combine(app.Environment.ContentRootPath, "Handbook"), CancellationToken.None);
 }
 
 app.UseCors();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 app.MapRequests();
+app.MapKnowledge();
 
 app.Run();
 

@@ -124,5 +124,6 @@ function waiting(id: number, confidence: number): RequestView {
     status: 'AwaitingReview',
     decidedByHuman: false,
     receivedAt: '2026-10-26T08:00:00+00:00',
+    answer: null,
   };
 }

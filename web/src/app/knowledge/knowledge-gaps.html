@@ -1,0 +1,32 @@
+<section class="panel">
+  <div class="head">
+    <div>
+      <h2>Wissenslücken</h2>
+      <p class="hint">
+        Fragen, die das Handbuch nicht beantworten konnte. Je häufiger eine Frage gestellt
+        wurde, desto mehr lohnt sich ein Artikel dazu.
+      </p>
+    </div>
+
+    <button class="refresh" (click)="refresh()" [disabled]="loading()">Aktualisieren</button>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (gaps().length) {
+    <p class="total">
+      {{ gaps().length }} offene Themen &middot; {{ totalAsked() }} Anfragen betroffen
+    </p>
+  } @else if (!loading()) {
+    <p class="empty">Keine Lücken. Das Handbuch hat bisher jede Frage abgedeckt.</p>
+  }
+
+  @for (gap of gaps(); track gap.id) {
+    <article class="item">
+      <span class="count" [class.hot]="gap.timesAsked > 2">{{ gap.timesAsked }}&times;</span>
+      <span class="question">{{ gap.question }}</span>
+    </article>
+  }
+</section>

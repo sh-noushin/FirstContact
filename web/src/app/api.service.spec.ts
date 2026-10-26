@@ -72,6 +72,7 @@ function view(overrides: Partial<RequestView> = {}): RequestView {
     status: 'Routed',
     decidedByHuman: false,
     receivedAt: '2026-10-26T08:00:00+00:00',
+    answer: null,
     ...overrides,
   };
 }

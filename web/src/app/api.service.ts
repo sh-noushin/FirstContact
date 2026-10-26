@@ -2,6 +2,21 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
+/** The answer the bot found in the handbook, with the articles it used. */
+export interface AnswerView {
+  answered: boolean;
+  text: string;
+  sources: string[];
+}
+
+/** A question the handbook could not answer. */
+export interface GapView {
+  id: number;
+  question: string;
+  timesAsked: number;
+  lastAskedAt: string;
+}
+
 /** What the API sends back after a message was classified and routed. */
 export interface RequestView {
   id: number;
@@ -14,6 +29,7 @@ export interface RequestView {
   status: string;
   decidedByHuman: boolean;
   receivedAt: string;
+  answer: AnswerView | null;
 }
 
 /** One place for every call to the C# API. */
@@ -24,6 +40,11 @@ export class ApiService {
   /** Sends a customer message and returns how it was classified and routed. */
   send(message: string): Promise<RequestView> {
     return firstValueFrom(this.http.post<RequestView>('/api/requests', { message }));
+  }
+
+  /** The questions the handbook could not answer, most asked first. */
+  knowledgeGaps(): Promise<GapView[]> {
+    return firstValueFrom(this.http.get<GapView[]>('/api/knowledge/gaps'));
   }
 
   /** The requests the classifier was not sure enough about. */

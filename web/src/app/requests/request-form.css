@@ -116,3 +116,43 @@ dd {
 .error {
   color: #c62f2f;
 }
+
+.answer {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  background: #f1f6ff;
+  border-left: 3px solid #2563eb;
+  border-radius: 0 10px 10px 0;
+}
+
+.answer.gap {
+  background: #fff8e6;
+  border-left-color: #e0a33a;
+}
+
+.answer h3 {
+  margin: 0 0 0.4rem;
+}
+
+.answer p {
+  margin: 0;
+}
+
+.text {
+  white-space: pre-wrap;
+}
+
+.sources {
+  margin-top: 0.6rem !important;
+  color: #646b7a;
+  font-size: 0.82rem;
+}
+
+.source {
+  display: inline-block;
+  margin-left: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  background: #fff;
+  border: 1px solid #d6e0f5;
+  border-radius: 999px;
+}

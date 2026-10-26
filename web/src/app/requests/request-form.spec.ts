@@ -102,6 +102,31 @@ describe('RequestForm', () => {
     expect(form.destinationLabel(destination)).toBe(expected);
   });
 
+  it('shows the handbook answer with its source', async () => {
+    api.answer = view({
+      answer: { answered: true, text: 'Waehlen Sie Export.', sources: ['Dokumente exportieren'] },
+    });
+    form.message.set('Wie exportiere ich?');
+    await form.send();
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Antwort aus dem Handbuch');
+    expect(text).toContain('Waehlen Sie Export.');
+    expect(text).toContain('Dokumente exportieren');
+  });
+
+  it('says plainly when the handbook has no answer', async () => {
+    api.answer = view({ answer: { answered: false, text: '', sources: [] } });
+    form.message.set('Gibt es eine SAP-Schnittstelle?');
+    await form.send();
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Keine Antwort im Handbuch');
+    expect(text).toContain('Wissenslücke');
+  });
+
   it('renders the result in the page', async () => {
     form.message.set('Wie exportiere ich?');
     await form.send();
@@ -126,6 +151,7 @@ function view(overrides: Partial<RequestView> = {}): RequestView {
     status: 'Routed',
     decidedByHuman: false,
     receivedAt: '2026-10-26T08:00:00+00:00',
+    answer: null,
     ...overrides,
   };
 }

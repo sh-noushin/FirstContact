@@ -50,6 +50,29 @@
       }
 
       <p class="reason">{{ r.reason }}</p>
+
+      @if (r.answer; as answer) {
+        @if (answer.answered) {
+          <div class="answer">
+            <h3>Antwort aus dem Handbuch</h3>
+            <p class="text">{{ answer.text }}</p>
+
+            <p class="sources">
+              Quelle: @for (source of answer.sources; track source) {
+                <span class="source">{{ source }}</span>
+              }
+            </p>
+          </div>
+        } @else {
+          <div class="answer gap">
+            <h3>Keine Antwort im Handbuch</h3>
+            <p>
+              Dazu steht nichts in der Dokumentation. Die Frage wurde als Wissenslücke
+              festgehalten, damit ein Artikel dazu entstehen kann.
+            </p>
+          </div>
+        }
+      }
     </div>
   }
 </section>

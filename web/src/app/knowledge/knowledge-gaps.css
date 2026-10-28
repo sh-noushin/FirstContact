@@ -84,3 +84,64 @@ h2 {
 .error {
   color: #c62f2f;
 }
+
+.question {
+  flex: 1;
+}
+
+.write {
+  flex-shrink: 0;
+  padding: 0.35rem 0.8rem;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  background: #2563eb;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.writer {
+  margin-top: 1rem;
+}
+
+.writer input,
+.writer textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0.6rem;
+  padding: 0.7rem;
+  font: inherit;
+  border: 1px solid #ccd0d9;
+  border-radius: 10px;
+}
+
+.writer textarea {
+  resize: vertical;
+}
+
+.writer button {
+  padding: 0.6rem 1.3rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: #2563eb;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.writer button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.done {
+  margin: 0.8rem 0 0;
+  padding: 0.7rem 0.9rem;
+  background: #eaf6ed;
+  border-left: 3px solid #15803d;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+}

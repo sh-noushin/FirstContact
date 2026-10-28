@@ -13,6 +13,22 @@ namespace FirstContact.Infrastructure.Privacy;
 /// </summary>
 public class AzureLanguageRedactor : IPersonalDataRedactor
 {
+    /// <summary>
+    /// Only genuinely personal details are removed. Organisation names are deliberately
+    /// left in: masking "SAP" would turn a useful knowledge gap into "Schnittstelle zu ***?"
+    /// without protecting anybody.
+    /// </summary>
+    private static readonly PiiEntityCategory[] Personal =
+    [
+        PiiEntityCategory.Person,
+        PiiEntityCategory.Email,
+        PiiEntityCategory.PhoneNumber,
+        PiiEntityCategory.Address,
+        PiiEntityCategory.CreditCardNumber,
+        PiiEntityCategory.InternationalBankingAccountNumber,
+        PiiEntityCategory.IPAddress,
+    ];
+
     private readonly TextAnalyticsClient _language;
     private readonly ILogger<AzureLanguageRedactor> _logger;
 
@@ -29,8 +45,15 @@ public class AzureLanguageRedactor : IPersonalDataRedactor
     {
         try
         {
-            Response<PiiEntityCollection> found =
-                await _language.RecognizePiiEntitiesAsync(text, cancellationToken: cancellationToken);
+            RecognizePiiEntitiesOptions options = new();
+
+            foreach (PiiEntityCategory category in Personal)
+            {
+                options.CategoriesFilter.Add(category);
+            }
+
+            Response<PiiEntityCollection> found = await _language.RecognizePiiEntitiesAsync(
+                text, options: options, cancellationToken: cancellationToken);
 
             return new RedactedText(found.Value.RedactedText, true);
         }

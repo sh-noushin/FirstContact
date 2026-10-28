@@ -41,6 +41,7 @@ public static class DependencyInjection
         services.AddScoped<IPersonalDataRedactor, AzureLanguageRedactor>();
 
         services.AddScoped<IKnowledgeGapRepository, KnowledgeGapRepository>();
+        services.AddScoped<IArticleRepository, ArticleRepository>();
         services.AddSingleton<IEmbedder, AzureEmbedder>();
         services.AddScoped<IKnowledgeSearch, VectorSearch>();
         services.AddScoped<IAnswerWriter, AzureAnswerWriter>();

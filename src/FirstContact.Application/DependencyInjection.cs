@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.AddScoped<GetReviewQueue>();
         services.AddScoped<ResolveReview>();
         services.AddScoped<AnswerFromHandbook>();
+        services.AddScoped<WriteArticle>();
         services.AddScoped<GetDashboard>();
         services.AddScoped<GroupFeatureWish>();
 

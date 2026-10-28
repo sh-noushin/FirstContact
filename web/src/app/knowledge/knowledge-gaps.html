@@ -27,6 +27,28 @@
     <article class="item">
       <span class="count" [class.hot]="gap.timesAsked > 2">{{ gap.timesAsked }}&times;</span>
       <span class="question">{{ gap.question }}</span>
+      <button class="write" (click)="writeFor(gap)">Artikel schreiben</button>
     </article>
+  }
+</section>
+
+<section class="panel writer">
+  <h2>Artikel schreiben</h2>
+  <p class="hint">
+    Ein neuer Artikel wird sofort durchsuchbar. Ein vorhandener Titel ersetzt den alten Text,
+    statt eine zweite Fassung anzulegen.
+  </p>
+
+  <input [(ngModel)]="title" placeholder="Titel des Abschnitts" />
+  <textarea rows="6" [(ngModel)]="content" placeholder="Inhalt des Abschnitts …"></textarea>
+
+  <button (click)="save()" [disabled]="saving() || !title().trim() || !content().trim()">
+    {{ saving() ? 'Einen Moment …' : 'Speichern' }}
+  </button>
+
+  @if (saved()) {
+    <p class="done">
+      „{{ saved() }}" wurde gespeichert. Dieselbe Frage wird jetzt aus dem Handbuch beantwortet.
+    </p>
   }
 </section>

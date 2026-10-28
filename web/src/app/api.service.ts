@@ -9,6 +9,13 @@ export interface AnswerView {
   sources: string[];
 }
 
+/** One handbook article. */
+export interface ArticleView {
+  id: number;
+  title: string;
+  content: string;
+}
+
 /** A question the handbook could not answer. */
 export interface GapView {
   id: number;
@@ -63,6 +70,13 @@ export class ApiService {
   /** Sends a customer message and returns how it was classified and routed. */
   send(message: string): Promise<RequestView> {
     return firstValueFrom(this.http.post<RequestView>('/api/requests', { message }));
+  }
+
+  /** Adds a handbook article, or improves the one with the same title. */
+  writeArticle(title: string, content: string): Promise<ArticleView> {
+    return firstValueFrom(
+      this.http.post<ArticleView>('/api/knowledge/articles', { title, content }),
+    );
   }
 
   /** What customers are asking for, grouped by idea. */

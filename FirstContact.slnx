@@ -11,4 +11,7 @@
     <Project Path="tests/FirstContact.Domain.Tests/FirstContact.Domain.Tests.csproj" />
     <Project Path="tests/FirstContact.Infrastructure.Tests/FirstContact.Infrastructure.Tests.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/FirstContact.Evaluation/FirstContact.Evaluation.csproj" />
+  </Folder>
 </Solution>

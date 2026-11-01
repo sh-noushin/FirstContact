@@ -1,25 +1,23 @@
 # Classification evaluation
 
 - **Messages:** 40
-- **Accuracy:** 90%
-- **Handled automatically and correctly:** 85%
-- **Sent to a person:** 7.5%
-- **Confidently wrong:** 3
+- **Accuracy:** 95%
+- **Handled automatically and correctly:** 82.5%
+- **Sent to a person:** 15%
+- **Confidently wrong:** 1
 
 ## By type
 
 | Expected | Messages | Correct | Average confidence |
 |---|---|---|---|
-| FeatureRequest | 10 | 9 | 0.88 |
-| Other | 10 | 8 | 0.86 |
-| Problem | 10 | 10 | 0.89 |
-| Question | 10 | 9 | 0.85 |
+| FeatureRequest | 10 | 8 | 0.84 |
+| Other | 10 | 10 | 0.70 |
+| Problem | 10 | 10 | 0.85 |
+| Question | 10 | 10 | 0.83 |
 
 ## Mistakes
 
 | Message | Expected | Got | Confidence | Caught by the threshold |
 |---|---|---|---|---|
-| Wie lange werden signierte Dokumente aufbewahrt? | Question | Other | 0.90 | **no** |
 | Können wir Dokumente auch per Smartphone freigeben? | FeatureRequest | Question | 0.90 | **no** |
-| Wir sind sehr unzufrieden, das muss sich ändern. | Other | Problem | 0.70 | **no** |
-| Können Sie mir helfen? | Other | Question | 0.60 | yes |
+| Das ist alles nicht besonders benutzerfreundlich. | FeatureRequest | Other | 0.30 | yes |

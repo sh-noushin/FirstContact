@@ -1,0 +1,17 @@
+# Build output from the host would otherwise be copied into the image, and it
+# contains Windows paths that break the build inside Linux.
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+
+# Never copy secrets or the local database into an image.
+.env
+**/appsettings.Development.json
+**/*.db
+
+.git/
+tests/
+tools/
+web/

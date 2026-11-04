@@ -74,7 +74,29 @@ that already exist. Only classification and answering cost tokens.
 
 ---
 
-## Running it
+## Running it with Docker
+
+The quickest way to try it. You need **only Docker**; the images bring .NET and
+Node with them.
+
+```bash
+cp .env.example .env     # then fill in your Azure values
+docker compose up
+```
+
+Open <http://localhost:4300>. Stop it with `docker compose down`.
+
+`.env` needs an **API key** from the Azure portal, because a container has no
+`az login` session of its own. It is git-ignored, so the key stays on your
+machine. Set `WEB_PORT` if 4300 is taken &mdash; the dev server below uses the same
+port, so the two cannot run at once.
+
+The database lives in a named volume, so the handbook is embedded once and
+survives restarts rather than being paid for again.
+
+## Running it for development
+
+Both halves reload as you edit, and no API key is needed.
 
 You need the .NET 10 SDK, Node 20 or newer, and an Azure AI Services resource
 with `gpt-5-mini` and `text-embedding-3-small` deployed.
@@ -157,6 +179,41 @@ Angular         55   components and their rendered output
 
 No test calls Azure. The two model clients are deliberately thin so that the
 parsing &mdash; the part that can go wrong &mdash; is pure and covered.
+
+---
+
+## How well does it work?
+
+A set of 40 labelled German messages is kept in `tools/FirstContact.Evaluation`.
+Running it classifies each one and writes a report to `docs/evaluation.md`.
+
+```bash
+cd tools/FirstContact.Evaluation && dotnet run
+```
+
+The current result:
+
+| | |
+|---|---|
+| Accuracy | **95%** |
+| Handled automatically and correctly | 82.5% |
+| Sent to a person | 15% |
+| Confidently wrong | **1** |
+
+The last row is the one that matters. The confidence threshold protects against
+*uncertainty*, not against being *confidently wrong*, so a mistake made at 0.90
+reaches the customer unchecked. Counting those separately is the point of the
+report.
+
+The first run scored 90% with **three** confident mistakes. Reading them showed
+the type definitions in the prompt were too narrow: a question about retention
+periods was filed as a commercial matter, because "question" had been described
+as "Frage zur Bedienung". Widening the definitions and adding three decision
+rules took it to 95% with one.
+
+Automation went slightly **down** in the process, from 85% to 82.5%, and that is
+the intended direction: the model is now more honest about ambiguous messages, so
+more of them reach a person instead of being routed on false confidence.
 
 ---
 
